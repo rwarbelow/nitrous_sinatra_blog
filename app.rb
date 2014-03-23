@@ -12,6 +12,8 @@ configure :development do
 end
 
 helpers do
+  include Rack::Utils
+  alias_method :h, :escape_html
   def title
     if @title
       "#{@title}"
@@ -52,4 +54,15 @@ get "/" do
   @posts = Post.order("created_at DESC")
   @title = "Welcome!"
   erb :"posts/index"
+end
+
+get "/posts/:id/edit" do
+  @post = Post.find(params[:id])
+  @title = "Edit Form"
+  erb :"posts/edit"
+end
+put "/posts/:id" do
+  @post = Post.find(params[:id])
+  @post.update(params[:post])
+  redirect "/posts/#{@post.id}"
 end
